@@ -17,6 +17,7 @@ public class PlayerWeapon : MonoBehaviour
 
     public GameObject bulletPrefab;
     public Transform bulletSpawnPos;
+    public GameObject explosionPrefab;
 
     private PlayerController player;
 
@@ -42,6 +43,11 @@ public class PlayerWeapon : MonoBehaviour
         player.photonView.RPC("SpawnBullet", RpcTarget.All, bulletSpawnPos.position, Camera.main.transform.forward);
     }
 
+    public void TryExplode (Vector3 pos)
+    {
+        player.photonView.RPC("SpawnExplosion", RpcTarget.All, pos);
+    }
+
     [PunRPC]
     void SpawnBullet (Vector3 pos, Vector3 dir)
     {
@@ -53,7 +59,7 @@ public class PlayerWeapon : MonoBehaviour
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
 
         //initialize it and set velocity
-        bulletScript.Initialize(damage, player.id, player.photonView.IsMine);
+        bulletScript.Initialize(damage, player.id, player.photonView.IsMine, this);
         bulletScript.rig.velocity = dir * bulletSpeed;
     }
 
@@ -64,5 +70,18 @@ public class PlayerWeapon : MonoBehaviour
 
         //update ammo ui
         GameUI.instance.UpdateAmmoText();
+    }
+
+    [PunRPC]
+    void SpawnExplosion(Vector3 pos)
+    {
+        // spawn and orient it
+        GameObject explosionObj = Instantiate(explosionPrefab, pos, Quaternion.identity);
+
+        //get bullet script
+        Explosion explosionScript = explosionObj.GetComponent<Explosion>();
+
+        //initialize it and set velocity
+        explosionScript.Initialize(damage, player.id, player.photonView.IsMine);
     }
 }

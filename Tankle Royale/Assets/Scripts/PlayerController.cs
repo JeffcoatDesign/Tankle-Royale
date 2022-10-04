@@ -13,18 +13,28 @@ public class PlayerController : MonoBehaviourPun
     [Header("Stats")]
     public float moveSpeed;
     public float jumpForce;
+    public float rotationSpeed;
     public int curHp;
     public int maxHp;
     public int kills;
     public bool dead;
 
     private bool flashingDamage;
+    private Vector3 camForward;
+    private Vector3 camRight;
+    private float curCamEulerY;
 
     [Header("Components")]
     public Rigidbody rig;
     public Player photonPlayer;
     public PlayerWeapon weapon;
     public MeshRenderer mr;
+
+    [Header("Raycast Components")]
+    public Transform frontLeftCorner;
+    public Transform frontRightCorner;
+    public Transform backRightCorner;
+    public Transform backLeftCorner;
 
     [PunRPC]
     public void Initialize (Player player)
@@ -42,6 +52,9 @@ public class PlayerController : MonoBehaviourPun
         else
         {
             GameUI.instance.Initialize(this);
+            camForward = Camera.main.transform.forward;
+            camRight = Camera.main.transform.right;
+            curCamEulerY = Camera.main.transform.eulerAngles.y;
         }
     }
 
@@ -52,8 +65,8 @@ public class PlayerController : MonoBehaviourPun
         
         Move();
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            TryJump();
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    TryJump();
 
         if (Input.GetMouseButtonDown(0))
             weapon.TryShoot();
@@ -61,23 +74,114 @@ public class PlayerController : MonoBehaviourPun
 
     void Move ()
     {
+        bool isRotating = false;
         // get input axis
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 dir = (transform.forward * z + transform.right * x) * moveSpeed;
-        dir.y = rig.velocity.y;
+        Vector3 dir;
 
+        if (x == 0 && z == 0)
+        {
+            camForward = Camera.main.transform.forward;
+            camRight = Camera.main.transform.right;
+            curCamEulerY = Camera.main.transform.eulerAngles.y;
+        }
+
+        isRotating = CheckRot(x, z);
+
+        if (!isRotating)
+            dir = (camForward * z + camRight * x) * moveSpeed;
+        else
+            dir = (camForward * z + camRight * x) * (moveSpeed / 2);
+
+        dir.y = rig.velocity.y;
         rig.velocity = dir;
+
+        //MatchTerrain();
     }
 
-    void TryJump ()
-    {
+    //void TryJump ()
+    //{
         // create a ray facing down
-        Ray ray = new Ray(transform.position, Vector3.down);
+        //Ray ray = new Ray(transform.position, Vector3.down);
 
-        if (Physics.Raycast(ray, 1.5f))
-            rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        //if (Physics.Raycast(ray, 1.5f))
+            //rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    //}
+
+    bool CheckRot(float x, float z)
+    {
+        float currentRotation = transform.eulerAngles.y;
+        float angleDifference;
+        float targetRotation = 0;
+
+        if (x > 0 && z > 0)
+            targetRotation = 45;
+        else if (x > 0 && z < 0)
+            targetRotation = 135;
+        else if (x < 0 && z > 0)
+            targetRotation = 315;
+        else if (x < 0 && z < 0)
+            targetRotation = 225;
+        else if (z < 0)
+            targetRotation = 180;
+        else if (z > 0)
+            targetRotation = 0;
+        else if (x < 0)
+            targetRotation = 270;
+        else if (x > 0)
+            targetRotation = 90;
+        else
+            return false;
+
+        targetRotation = modulo(targetRotation + curCamEulerY, 360f);
+        angleDifference = modulo(targetRotation - currentRotation, 360f);
+        if (currentRotation > targetRotation + 3 || currentRotation < targetRotation - 3)
+        {
+            if (angleDifference > 180)
+            {
+                transform.Rotate(0, 360 - rotationSpeed * Time.deltaTime, 0);
+            }
+            else
+            {
+                transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+            }
+             return true;
+        }
+        return false;
+    }
+
+    //void MatchTerrain ()
+    //{
+    //    RaycastHit frontRightR;
+    //    RaycastHit frontLeftR;
+    //    RaycastHit backRightR;
+    //    RaycastHit backLeftR;
+
+    //    Vector3 upDirection;
+
+    //    Physics.Raycast(frontRightCorner.position + Vector3.up, Vector3.down, out frontRightR);
+    //    Physics.Raycast(frontLeftCorner.position + Vector3.up, Vector3.down, out frontLeftR);
+    //    Physics.Raycast(backRightCorner.position + Vector3.up, Vector3.down, out backRightR);
+    //    Physics.Raycast(backLeftCorner.position + Vector3.up, Vector3.down, out backLeftR);
+
+    //    Vector3 side1 = frontRightR.point - frontLeftR.point;
+    //    Vector3 side2 = frontLeftR.point - backLeftR.point;
+    //    Vector3 side3 = backLeftR.point - backRightR.point;
+    //    Vector3 side4 = backRightR.point - frontRightR.point;
+
+    //    upDirection = (Vector3.Cross(side1, side2) +
+    //        Vector3.Cross(side2, side3) +
+    //        Vector3.Cross(side3, side4) +
+    //        Vector3.Cross(side4, side1)).normalized;
+
+    //    transform.rotation = Quaternion.LookRotation(transform.forward, -upDirection);
+    //}
+
+    float modulo (float x, float m)
+    {
+        return (x % m + m) % m;
     }
 
     [PunRPC]

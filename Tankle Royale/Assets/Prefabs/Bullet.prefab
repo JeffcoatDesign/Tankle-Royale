@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rig: {fileID: 3694366461354944365}
+  bulletDrop: 5
 --- !u!33 &1168756472278142519
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -25,6 +25,7 @@ public class CameraController : MonoBehaviour
 
     private float rotX;
     private float rotY;
+    private Quaternion parentQuaternion;
 
     private bool isSpectator = false;
 
@@ -63,11 +64,13 @@ public class CameraController : MonoBehaviour
         }
         else
         {
+            parentQuaternion = transform.parent.parent.rotation;
+
             //rotate the cam vertically
             transform.localRotation = Quaternion.Euler(-rotY, 0, 0);
 
             //rotate the player horizontally
-            transform.parent.rotation = Quaternion.Euler(0, rotX, 0);
+            transform.parent.rotation = parentQuaternion * Quaternion.Euler(0, rotX, 0);
 
             UpdateBarrel();
         }
