@@ -12,6 +12,8 @@ public class GameUI : MonoBehaviour
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI winText;
     public Image winBackground;
+    public GameObject chatLog;
+    public GameObject textPrefab;
 
     private PlayerController player;
 
@@ -53,5 +55,11 @@ public class GameUI : MonoBehaviour
     {
         winBackground.gameObject.SetActive(true);
         winText.text = playerName + " wins";
+    }
+
+    public void PlayerDied (string deadPlayer)
+    {
+        GameObject deadText = Instantiate(textPrefab, chatLog.transform.position, chatLog.transform.rotation, chatLog.transform);
+        deadText.GetComponent<TextMeshProUGUI>().text = deadPlayer + " died.";
     }
 }

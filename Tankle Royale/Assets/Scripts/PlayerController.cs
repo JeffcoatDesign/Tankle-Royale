@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 
 public class PlayerController : MonoBehaviourPun
 {
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviourPun
     public Player photonPlayer;
     public PlayerWeapon weapon;
     public MeshRenderer mr;
+    public TextMeshPro nameText;
 
     [Header("Raycast Components")]
     public Transform frontLeftCorner;
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviourPun
         photonPlayer = player;
 
         GameManager.instance.players[id - 1] = this;
+        nameText.text = player.NickName;
 
         if (!photonView.IsMine)
         {
@@ -55,11 +58,18 @@ public class PlayerController : MonoBehaviourPun
             camForward = Camera.main.transform.forward;
             camRight = Camera.main.transform.right;
             curCamEulerY = Camera.main.transform.eulerAngles.y;
+            nameText.enabled = false;
         }
     }
 
     void Update ()
     {
+        if (nameText != null && isActiveAndEnabled)
+        {
+            nameText.transform.LookAt(Camera.main.transform.position);
+            nameText.transform.Rotate(0, 180, 0);
+        }
+
         if (!photonView.IsMine || dead)
             return;
         
@@ -231,6 +241,8 @@ public class PlayerController : MonoBehaviourPun
     {
         curHp = 0;
         dead = true;
+
+        GameUI.instance.PlayerDied(nameText.text);
 
         GameManager.instance.alivePlayers--;
 
