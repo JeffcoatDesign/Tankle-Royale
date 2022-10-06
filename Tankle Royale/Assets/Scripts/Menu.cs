@@ -13,6 +13,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     public GameObject createRoomScreen;
     public GameObject lobbyScreen;
     public GameObject lobbyBrowserScreen;
+    public GameObject tutorialScreen;
+    public GameObject creditsScreen;
 
     [Header("Main Screen")]
     public Button createRoomButton;
@@ -59,6 +61,8 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         lobbyScreen.SetActive(false);
         createRoomScreen.SetActive(false);
         lobbyBrowserScreen.SetActive(false);
+        tutorialScreen.SetActive(false);
+        creditsScreen.SetActive(false);
 
         //activate requested screen
         screen.SetActive(true);
@@ -93,6 +97,16 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     public void OnFindRoomButton ()
     {
         SetScreen(lobbyBrowserScreen);
+    }
+
+    public void OnTutorialButton ()
+    {
+        SetScreen(tutorialScreen);
+    }
+
+    public void OnCreditsButton ()
+    {
+        SetScreen(creditsScreen);
     }
 
         //CREATE ROOM SCREEN  

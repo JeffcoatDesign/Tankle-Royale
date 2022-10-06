@@ -11,12 +11,18 @@ public class Explosion : MonoBehaviour
     public Rigidbody rig;
     public float sizeInc;
     public float targetDiameter;
+    public AudioSource audioSrc;
 
     public void Initialize(int damage, int attackerId, bool isMine)
     {
         this.damage = damage;
         this.attackerId = attackerId;
         this.isMine = isMine;
+        if (audioSrc != null)
+        {
+            audioSrc.volume = Mathf.Clamp(NetworkManager.instance.volume * 1.5f, 0, 1);
+            audioSrc.Play();
+        }
 
         Destroy(gameObject, 1.0f);
     }

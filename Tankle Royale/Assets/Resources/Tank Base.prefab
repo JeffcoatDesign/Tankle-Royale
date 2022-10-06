@@ -1834,8 +1834,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  curAmmo: 50
-  maxAmmo: 50
+  curAmmo: 20
+  maxAmmo: 20
   bulletSpeed: 20
   shootRate: 0.7
   bulletPrefab: {fileID: 1430024912324532706, guid: 10865d9b6917c5040929f45805797de1, type: 3}

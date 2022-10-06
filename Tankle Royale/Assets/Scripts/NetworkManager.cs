@@ -7,6 +7,7 @@ using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public int maxPlayers = 10;
+    public float volume = 0.5f;
 
     // instance
     public static NetworkManager instance;
