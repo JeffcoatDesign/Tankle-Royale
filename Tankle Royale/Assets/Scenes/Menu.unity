@@ -521,7 +521,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8a6ddeacd446d25409f698b97a8fbe24, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 9b5b8aeee45ffb34c81d4a44b15da66e, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1428,7 +1428,10 @@ MonoBehaviour:
   m_text: 'Use WASD to move based on where the camera is looking.
 
     While held,
-    WASD will be "Locked" allowing you to look around without changing direction.'
+    WASD will be "Locked" allowing you to look around without changing direction.
+
+    Note:
+    You have to release WASD for a second before it unlocks.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
